@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Create HTML Project Structure",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "mkdir css, js, images; New-Item -Path index.html -ItemType File -Force -Value \"<!DOCTYPE html>`n<html>`n<head>`n    <title>My HTTP Project</title>`n    <link rel='stylesheet' type='text/css' href='css/style.css'>`n</head>`n<body>`n    <script src='js/script.js'></script>`n</body>`n</html>\"; New-Item -Path css/style.css -ItemType File -Force -Value \"body {`n    font-family: Arial, sans-serif;`n}\"; New-Item -Path js/script.js -ItemType File -Force -Value \"document.addEventListener('DOMContentLoaded', function() {`n    console.log('Hello, world!');`n});\""
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}
