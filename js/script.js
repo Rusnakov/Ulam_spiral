@@ -7,7 +7,7 @@ let x = Math.floor(CANVAS_WIDTH / 2);
 let y = Math.floor(CANVAS_HEIGHT / 2);
 
 let step = 1;
-let stepSize = 2;
+let stepSize = 5;
 let numSteps = 1;
 let state = 0;
 let turnCounter = 1;
@@ -35,7 +35,7 @@ function setupText() {
 
 function drawCircle(x,y){
   ctx.beginPath();
-  ctx.arc(x,y, 1, 0, 2*Math.PI);
+  ctx.arc(x,y, 2, 0, 2*Math.PI);
   ctx.fillStyle="black";
   ctx.fill();
 }
@@ -59,7 +59,7 @@ function isPrime(num) {
 }
 
 function drawText() {
-  for (let i = 1; i <= 1000000; i++) {
+  for (let i = 1; i <= CANVAS_WIDTH*CANVAS_WIDTH; i++) {
     
 
     if (isPrime(step)) {
