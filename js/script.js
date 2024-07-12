@@ -1,5 +1,5 @@
-let CANVAS_WIDTH = window.innerWidth - 50;
-let CANVAS_HEIGHT = window.innerHeight - 50;
+let CANVAS_WIDTH = 600; //window.innerWidth - 50;
+let CANVAS_HEIGHT = 600; //window.innerHeight - 50;
 
 let canvas, ctx;
 
