@@ -20,6 +20,10 @@
     padding: 10px;
 }
 
+.my-input {
+    width: 50px;
+}
+
 #content {
     float: left;
     padding: 10px;

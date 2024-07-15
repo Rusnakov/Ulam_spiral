@@ -12,6 +12,10 @@ let numSteps = 1;
 let state = 0;
 let turnCounter = 1;
 
+let diameter = document.getElementById("rozmiarKropki").value;
+
+console.log(diameter);
+
 const cols = Math.floor(CANVAS_WIDTH);
 const rows = Math.floor(CANVAS_HEIGHT);
 
@@ -33,10 +37,10 @@ function setupText() {
   ctx.textBaseline = "middle";
 }
 
-function drawCircle(x,y){
+function drawCircle(x, y) {
   ctx.beginPath();
-  ctx.arc(x,y, 2, 0, 2*Math.PI);
-  ctx.fillStyle="black";
+  ctx.arc(x, y, diameter, 0, 2 * Math.PI);
+  ctx.fillStyle = "black";
   ctx.fill();
 }
 
@@ -50,24 +54,21 @@ function isPrime(num) {
   if (num % 2 === 0 || num % 3 === 0) {
     return false;
   }
-  for(let i=5; i*i<= num; i+=6){
-    if((num%i===0)||num%(i+2)===0){
+  for (let i = 5; i * i <= num; i += 6) {
+    if (num % i === 0 || num % (i + 2) === 0) {
       return false;
     }
   }
   return true;
 }
 
-function drawText() {
-  for (let i = 1; i <= CANVAS_WIDTH*CANVAS_WIDTH; i++) {
-    
+const timeoutMyLoop = setTimeout(myLoop,3000);
 
+function myLoop() {
     if (isPrime(step)) {
-      drawCircle(x,y);
-      //ctx.fillText(step, x, y);
+      drawCircle(x, y);
     }
-    //console.log(step,isPrime(step))
-    
+
     switch (state) {
       case 0: {
         x += stepSize;
@@ -94,19 +95,24 @@ function drawText() {
         numSteps++;
       }
     }
-
-    /*console.log(
-      step,
-      "numSteps = " + numSteps,
-      "tC = " + turnCounter,
-      "state = " + state
-    );*/
     step++;
-  }
-}
+    if (step <= CANVAS_WIDTH * CANVAS_WIDTH) {
+      myLoop();
+    }
+  };
 
 window.addEventListener("load", () => {
   initializeCanvas();
-  setupText();
-  drawText();
+  //setupText();
+  myLoop();
+
+  
 });
+
+const myButton = document.getElementById("przeslij");
+myButton.addEventListener("click", () => {
+  clearTimeout(timeoutMyLoop);
+  //initializeCanvas();
+  myLoop();
+});
+  
