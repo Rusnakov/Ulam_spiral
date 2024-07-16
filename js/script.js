@@ -12,7 +12,7 @@ let numSteps = 1;
 let state = 0;
 let turnCounter = 1;
 
-let diameter = document.getElementById("rozmiarKropki").value;
+let diameter = 2; //Domyślna wartość średnicy kropki
 
 console.log(diameter);
 
@@ -62,10 +62,10 @@ function isPrime(num) {
   return true;
 }
 
-const timeoutMyLoop = setTimeout(myLoop,3000);
-
 function myLoop() {
+  setTimeout(function () {
     if (isPrime(step)) {
+      console.log(diameter);
       drawCircle(x, y);
     }
 
@@ -99,20 +99,31 @@ function myLoop() {
     if (step <= CANVAS_WIDTH * CANVAS_WIDTH) {
       myLoop();
     }
-  };
+  }, 0);
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+}
 
 window.addEventListener("load", () => {
   initializeCanvas();
-  //setupText();
-  myLoop();
-
-  
-});
-
-const myButton = document.getElementById("przeslij");
-myButton.addEventListener("click", () => {
-  clearTimeout(timeoutMyLoop);
-  //initializeCanvas();
   myLoop();
 });
-  
+
+function setDraw() {
+  diameter = parseInt(document.getElementById("rozmiarKropki").value) || 2;
+  x = Math.floor(CANVAS_WIDTH / 2);
+  y = Math.floor(CANVAS_HEIGHT / 2);
+  step = 1;
+  stepSize = 5;
+  numSteps = 1;
+  state = 0;
+  turnCounter = 1;
+  clearCanvas();
+  console.log(diameter);
+  myLoop();
+}
+//myButton.addEventListener("click", () => {
+//clearTimeout(timeoutMyLoop);
+//initializeCanvas();
