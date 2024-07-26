@@ -1,23 +1,40 @@
+body, html{
+margin: 0;
+padding: 0;
+height: 100%;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+}
+
+
 #container {
-    width: auto;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 #logo {
     background-color: black;
     color: white;
     text-align: center;
-    padding: 5px;
+    padding: 10px;
+}
+
+#main{
+    display: flex;
+    flex: 1;
+    overflow: hidden;
 }
 
 #nav {
-    float: left;
+
+    padding: 5px;
     background-color: lightgray;
     color: black;
     width: auto;
-    height: 600px;
-    padding: 10px;
+    overflow-y: auto;
 }
 
 .my-input {
@@ -25,13 +42,24 @@
 }
 
 #content {
-    float: left;
+
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
     padding: 10px;
-    width: 600px;
+    border: 1px solid black;
+
+}
+
+#myCanvas
+{
+    width: 100%;
+    height: 100%;
 }
 
 #footer {
-    clear: both;
     background-color: black;
     color: white;
     text-align: center;
