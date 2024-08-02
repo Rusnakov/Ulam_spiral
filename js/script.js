@@ -49,12 +49,26 @@ class Spiral {
   }
 
   reset() {
-    this.radius = parseInt(
+    let newRadius = parseInt(
       document.getElementById(this.config.radiusInputId).value
     );
-    this.distance = parseInt(
+    if (newRadius) {
+      this.radius = newRadius;
+    } else {
+      document.getElementById(this.config.radiusInputId).value = this.radius;
+      alert("Wprowadź liczbę większą od 0!");
+    }
+
+    let newDistance = parseInt(
       document.getElementById(this.config.distanceInputId).value
     );
+    if (newDistance >= 0) {
+      this.distance = newDistance;
+    } else {
+      document.getElementById(this.config.distanceInputId).value =
+        this.distance;
+      alert("Ustaw odstęp większy lub rówy 0!");
+    }
     this.x = Math.floor(this.canvas.canvas.width / 2);
     this.y = Math.floor(this.canvas.canvas.height / 2);
     this.step = 1;
