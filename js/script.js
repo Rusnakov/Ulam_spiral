@@ -1,131 +1,183 @@
-let x;
-let y;
-let ctx;
+// Konfiguracja
+const config = {
+  canvasId: "myCanvas",
+  contentDivId: "content",
+  radiusInputId: "promienKropki",
+  distanceInputId: "odstepKropki",
+  animationCheckboxId: "animation",
+  statusElementId: "status",
+};
 
-let step = 1;
-let numSteps = 1;
-let state = 0;
-let turnCounter = 1;
-
-let radius = parseInt(document.getElementById("promienKropki").value);
-let distance = parseInt(document.getElementById("odstepKropki").value);
-let stepSize = 2 * radius + distance;
-
-function initializeCanvas() {
-  const canvas = document.getElementById("myCanvas");
-  ctx = canvas.getContext("2d");
-
-  setCanvasSize();
-
-  window.addEventListener("resize", function () {
-    setCanvasSize();
-    clearCanvas();
-    setDraw();
-  });
-
-  x = Math.floor(canvas.width / 2);
-  y = Math.floor(canvas.height / 2);
-}
-
-function setCanvasSize() {
-  const contentDiv = document.getElementById("content");
-  canvas = document.getElementById("myCanvas");
-  canvas.width = contentDiv.clientWidth;
-  canvas.height = contentDiv.clientHeight;
-}
-
-function setupText() {
-  ctx.font = "10px Arial";
-  ctx.fillStyle = "clack";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-}
-
-function drawCircle(x, y) {
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.fillStyle = "black";
-  ctx.fill();
-}
-
-function isPrime(num) {
-  if (num <= 1) {
-    return false;
+// Klasa Canvas
+class Canvas {
+  constructor(config) {
+    this.canvas = document.getElementById(config.canvasId);
+    this.ctx = this.canvas.getContext("2d");
+    this.contentDiv = document.getElementById(config.contentDivId);
+    this.setCanvasSize();
+    window.addEventListener("resize", () => this.handleResize());
   }
-  if (num <= 3) {
+
+  setCanvasSize() {
+    this.canvas.width = this.contentDiv.clientWidth;
+    this.canvas.height = this.contentDiv.clientHeight;
+  }
+
+  handleResize() {
+    this.setCanvasSize();
+    this.clear();
+  }
+
+  clear() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  drawCircle(x, y, radius) {
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    this.ctx.fillStyle = "black";
+    this.ctx.fill();
+  }
+}
+
+// Klasa Spiral
+class Spiral {
+  constructor(canvas, config) {
+    this.canvas = canvas;
+    this.config = config;
+    this.reset();
+  }
+
+  reset() {
+    this.radius = parseInt(
+      document.getElementById(this.config.radiusInputId).value
+    );
+    this.distance = parseInt(
+      document.getElementById(this.config.distanceInputId).value
+    );
+    this.x = Math.floor(this.canvas.canvas.width / 2);
+    this.y = Math.floor(this.canvas.canvas.height / 2);
+    this.step = 1;
+    this.numSteps = 1;
+    this.state = 0;
+    this.turnCounter = 1;
+    this.stepSize = 2 * this.radius + this.distance;
+  }
+
+  isPrime(num) {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 === 0 || num % 3 === 0) return false;
+    for (let i = 5; i * i <= num; i += 6) {
+      if (num % i === 0 || num % (i + 2) === 0) return false;
+    }
     return true;
   }
-  if (num % 2 === 0 || num % 3 === 0) {
-    return false;
+
+  moveNext() {
+    if (this.isPrime(this.step)) {
+      this.canvas.drawCircle(this.x, this.y, this.radius);
+    }
+
+    switch (this.state) {
+      case 0:
+        this.x += this.stepSize;
+        break;
+      case 1:
+        this.y -= this.stepSize;
+        break;
+      case 2:
+        this.x -= this.stepSize;
+        break;
+      case 3:
+        this.y += this.stepSize;
+        break;
+    }
+
+    if (this.step % this.numSteps === 0) {
+      this.state = (this.state + 1) % 4;
+      this.turnCounter++;
+      if (this.turnCounter % 2 === 0) {
+        this.numSteps++;
+      }
+    }
+    this.step++;
   }
-  for (let i = 5; i * i <= num; i += 6) {
-    if (num % i === 0 || num % (i + 2) === 0) {
-      return false;
+
+  draw() {
+    this.reset();
+    while (this.step <= this.canvas.canvas.width * this.canvas.canvas.height) {
+      this.moveNext();
     }
   }
-  return true;
+
+  animate() {
+    this.reset();
+    const animationStep = () => {
+      this.moveNext();
+      if (this.step <= this.canvas.canvas.height * this.canvas.canvas.height) {
+        setTimeout(animationStep, 20);
+      }
+    };
+    animationStep();
+  }
 }
 
-function myLoop() {
-  setTimeout(function () {
-    if (isPrime(step)) {
-      drawCircle(x, y);
-    }
+// Klasa App
+class App {
+  constructor(config) {
+    this.config = config;
+    this.canvas = new Canvas(config);
+    this.spiral = new Spiral(this.canvas, config);
+    this.setupEventListeners();
+  }
 
-    switch (state) {
-      case 0: {
-        x += stepSize;
-        break;
-      }
-      case 1: {
-        y -= stepSize;
-        break;
-      }
-      case 2: {
-        x -= stepSize;
-        break;
-      }
-      case 3: {
-        y += stepSize;
-        break;
-      }
-    }
+  setupEventListeners() {
+    const checkbox = document.getElementById(this.config.animationCheckboxId);
+    checkbox.addEventListener("change", () => this.handleAnimationToggle());
 
-    if (step % numSteps === 0) {
-      state = (state + 1) % 4;
-      turnCounter++;
-      if (turnCounter % 2 === 0) {
-        numSteps++;
-      }
+    document
+      .getElementById(this.config.radiusInputId)
+      .addEventListener("change", () => this.redraw());
+    document
+      .getElementById(this.config.distanceInputId)
+      .addEventListener("change", () => this.redraw());
+
+    window.addEventListener("resize", () => this.spiral.reset());
+  }
+
+  handleAnimationToggle() {
+    this.canvas.clear();
+    if (document.getElementById(this.config.animationCheckboxId).checked) {
+      this.spiral.animate();
+    } else {
+      this.spiral.draw();
     }
-    step++;
-    if (step <= canvas.height * canvas.height) {
-      myLoop();
+  }
+
+  redraw() {
+    this.canvas.clear();
+    if (document.getElementById(this.config.animationCheckboxId).checked) {
+      this.spiral.animate();
+    } else {
+      this.spiral.draw();
     }
-  }, 0);
+  }
+
+  init() {
+    const animationCheckbox = document.getElementById(
+      this.config.animationCheckboxId
+    );
+    if (animationCheckbox.checked) {
+      this.spiral.animate();
+    } else {
+      this.spiral.draw();
+    }
+  }
 }
 
-function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-window.addEventListener("load", function () {
-  initializeCanvas();
-  myLoop();
+// Inicjalizacja aplikacji
+window.addEventListener("load", () => {
+  const app = new App(config);
+  app.init();
 });
-
-function setDraw() {
-  radius = parseInt(document.getElementById("promienKropki").value);
-  distance = parseInt(document.getElementById("odstepKropki").value);
-  x = Math.floor(canvas.width / 2);
-  y = Math.floor(canvas.height / 2);
-
-  step = 1;
-  numSteps = 1;
-  state = 0;
-  turnCounter = 1;
-
-  stepSize = 2 * radius + distance;
-  clearCanvas();
-  myLoop();
-}
